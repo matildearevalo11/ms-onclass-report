@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: On-Class Report API
+  version: 1.0.0
+  description: Microservicio de reportes.
+servers:
+  - url: /api/v1
+paths:
+  /internal/bootcamp-reports:
+    post:
+      operationId: saveBootcampReport
+      summary: Registrar reporte de bootcamp
+      description: Guarda el snapshot enviado por el servicio de bootcamps. Uso interno.
+      parameters:
+        - name: X-Internal-Token
+          in: header
+          required: true
+          description: Credencial interna del servicio.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BootcampReport'
+      responses:
+        '204':
+          description: Reporte guardado.
+        '400':
+          description: Datos inválidos.
+        '401':
+          description: Credencial interna inválida.
+        '503':
+          description: MongoDB no disponible.
+components:
+  schemas:
+    BootcampReport:
+      type: object
+      required: [bootcampId, name, description, launchDate, durationDays, capacities, capacityCount, technologyCount, personCount]
+      properties:
+        bootcampId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        launchDate:
+          type: string
+          format: date
+        durationDays:
+          type: integer
+        capacities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Capacity'
+        capacityCount:
+          type: integer
+        technologyCount:
+          type: integer
+        personCount:
+          type: integer
+    Capacity:
+      type: object
+      required: [id, name, technologies]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        technologies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Technology'
+    Technology:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
