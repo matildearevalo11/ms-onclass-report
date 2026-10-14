@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: ms-onclass-report
+  webflux:
+    base-path: /api/v1
+  main:
+    web-application-type: reactive
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/on_class_report}
+report:
+  internal-token: ${REPORT_INTERNAL_TOKEN:local-dev-report-secret-change-me}
+server:
+  port: ${SERVER_PORT:8084}
+
+springdoc:
+  swagger-ui:
+    url: ${spring.webflux.base-path}/openapi.yaml
+    path: /swagger-ui.html
+  enable-default-api-docs: false
