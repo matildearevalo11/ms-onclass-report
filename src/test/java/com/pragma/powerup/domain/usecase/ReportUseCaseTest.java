@@ -63,4 +63,28 @@ class ReportUseCaseTest {
 
         StepVerifier.create(useCase.save(report)).expectError(IllegalStateException.class).verify();
     }
+
+    @Test
+    void updatesPersonCountOfAnExistingReport() {
+        when(persistence.updatePersonCount(7L, 3)).thenReturn(Mono.just(true));
+
+        StepVerifier.create(useCase.updatePersonCount(7L, 3)).verifyComplete();
+        verify(persistence).updatePersonCount(7L, 3);
+    }
+
+    @Test
+    void reportsMissingReportSoTheSenderRetriesLater() {
+        when(persistence.updatePersonCount(7L, 3)).thenReturn(Mono.just(false));
+
+        StepVerifier.create(useCase.updatePersonCount(7L, 3))
+                .expectError(com.pragma.powerup.domain.exception.NotFoundException.class).verify();
+    }
+
+    @Test
+    void rejectsInvalidPersonCountUpdates() {
+        StepVerifier.create(useCase.updatePersonCount(0L, 3)).expectError(ValidationException.class).verify();
+        StepVerifier.create(useCase.updatePersonCount(7L, -1)).expectError(ValidationException.class).verify();
+        StepVerifier.create(useCase.updatePersonCount(7L, null)).expectError(ValidationException.class).verify();
+        verifyNoInteractions(persistence);
+    }
 }

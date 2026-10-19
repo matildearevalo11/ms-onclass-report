@@ -77,6 +77,33 @@ class ReportApplicationTest {
     }
 
     @Test
+    void updatesPersonCountOnlyWithInternalToken() {
+        org.mockito.Mockito.when(persistence.updatePersonCount(7L, 3))
+                .thenReturn(reactor.core.publisher.Mono.just(true));
+        org.mockito.Mockito.when(persistence.updatePersonCount(8L, 3))
+                .thenReturn(reactor.core.publisher.Mono.just(false));
+
+        patchPersonCount("/internal/bootcamp-reports/7/person-count", Map.of("personCount", 3), true)
+                .expectStatus().isNoContent();
+        patchPersonCount("/internal/bootcamp-reports/8/person-count", Map.of("personCount", 3), true)
+                .expectStatus().isNotFound().expectBody().jsonPath("$.errors.message")
+                .isEqualTo(com.pragma.powerup.domain.exception.ExceptionMessages.REPORT_NOT_FOUND.getMessage());
+        patchPersonCount("/internal/bootcamp-reports/7/person-count", Map.of("personCount", -1), true)
+                .expectStatus().isBadRequest();
+        patchPersonCount("/internal/bootcamp-reports/7/person-count", Map.of("personCount", 3), false)
+                .expectStatus().isUnauthorized();
+    }
+
+    private org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec patchPersonCount(
+            String uri, Map<String, Object> body, boolean withToken) {
+        var request = client.patch().uri(uri).contentType(MediaType.APPLICATION_JSON);
+        if (withToken) {
+            request = request.header("X-Internal-Token", "local-dev-report-secret-change-me");
+        }
+        return request.bodyValue(body).exchange();
+    }
+
+    @Test
     void reportsMongoFailureAsServiceUnavailable() {
         org.mockito.Mockito.when(persistence.save(org.mockito.ArgumentMatchers.any()))
                 .thenReturn(reactor.core.publisher.Mono.error(

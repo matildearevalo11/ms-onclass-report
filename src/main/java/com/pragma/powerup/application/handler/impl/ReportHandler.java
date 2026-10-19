@@ -1,6 +1,7 @@
 package com.pragma.powerup.application.handler.impl;
 
 import com.pragma.powerup.application.dto.request.BootcampReportRequestDto;
+import com.pragma.powerup.application.dto.request.PersonCountRequestDto;
 import com.pragma.powerup.application.handler.IReportHandler;
 import com.pragma.powerup.application.mapper.BootcampReportMapper;
 import com.pragma.powerup.domain.api.IReportServicePort;
@@ -17,5 +18,10 @@ public class ReportHandler implements IReportHandler {
     @Override
     public Mono<Void> save(BootcampReportRequestDto request) {
         return service.save(mapper.toModel(request));
+    }
+
+    @Override
+    public Mono<Void> updatePersonCount(Long bootcampId, PersonCountRequestDto request) {
+        return service.updatePersonCount(bootcampId, request.getPersonCount());
     }
 }

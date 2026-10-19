@@ -31,7 +31,7 @@ public class InternalReportAuthenticationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (!exchange.getRequest().getPath().pathWithinApplication().value().equals(ApiPaths.BOOTCAMP_REPORTS)) {
+        if (!exchange.getRequest().getPath().pathWithinApplication().value().startsWith(ApiPaths.BOOTCAMP_REPORTS)) {
             return chain.filter(exchange);
         }
         String token = exchange.getRequest().getHeaders().getFirst(SecurityConstants.INTERNAL_TOKEN_HEADER);

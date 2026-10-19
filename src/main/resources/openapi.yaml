@@ -45,6 +45,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /internal/bootcamp-reports/{id}/person-count:
+    patch:
+      operationId: updatePersonCount
+      summary: Actualizar personas inscritas
+      description: Actualiza la cantidad de personas inscritas del reporte. Lo invoca ms-on-class al registrar inscripciones.
+      parameters:
+        - name: X-Internal-Token
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: ID del bootcamp.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [personCount]
+              properties:
+                personCount:
+                  type: integer
+                  minimum: 0
+      responses:
+        '204':
+          description: Cantidad actualizada.
+        '400':
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Credencial interna inválida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: El reporte del bootcamp aún no existe.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: MongoDB no disponible.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     ErrorResponse:
