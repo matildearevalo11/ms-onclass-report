@@ -29,12 +29,32 @@ paths:
           description: Reporte guardado.
         '400':
           description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Credencial interna inválida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '503':
           description: MongoDB no disponible.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            message:
+              type: string
     BootcampReport:
       type: object
       required: [bootcampId, name, description, launchDate, durationDays, capacities, capacityCount, technologyCount, personCount]

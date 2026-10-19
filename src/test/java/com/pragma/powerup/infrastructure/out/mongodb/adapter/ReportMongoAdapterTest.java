@@ -25,7 +25,7 @@ class ReportMongoAdapterTest {
         when(repository.save(any(BootcampReportDocument.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
         var report = new BootcampReport(7L, "Backend", "Services", LocalDate.of(2026, 11, 1), 90,
-                List.of(new CapacityDetail(1L, "API", List.of(new TechnologySummary(3L, "Java")))), 1, 1, 0);
+                List.of(new CapacityDetail(1L, "API", List.of(new TechnologySummary(3L, "Java")))), 1, 1L, 0);
 
         StepVerifier.create(new ReportMongoAdapter(repository).save(report)).verifyComplete();
 
