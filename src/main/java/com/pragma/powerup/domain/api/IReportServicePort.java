@@ -5,4 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface IReportServicePort {
     Mono<Void> save(BootcampReport report);
+    Mono<Void> updatePersonCount(Long bootcampId, Integer personCount);
 }

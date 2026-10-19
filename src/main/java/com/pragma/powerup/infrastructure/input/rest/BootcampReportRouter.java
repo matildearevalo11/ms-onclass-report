@@ -14,6 +14,7 @@ public class BootcampReportRouter {
     RouterFunction<ServerResponse> bootcampReportRoutes(BootcampReportRestHandler handler, ErrorHandlingFilter errors) {
         return RouterFunctions.route()
                 .POST(ApiPaths.BOOTCAMP_REPORTS, handler::save)
+                .PATCH(ApiPaths.BOOTCAMP_REPORT_PERSON_COUNT, handler::updatePersonCount)
                 .filter(errors)
                 .build();
     }

@@ -2,6 +2,7 @@ package com.pragma.powerup.domain.usecase;
 
 import com.pragma.powerup.domain.api.IReportServicePort;
 import com.pragma.powerup.domain.exception.ExceptionMessages;
+import com.pragma.powerup.domain.exception.NotFoundException;
 import com.pragma.powerup.domain.model.BootcampReport;
 import com.pragma.powerup.domain.model.CapacityDetail;
 import com.pragma.powerup.domain.model.TechnologySummary;
@@ -20,6 +21,17 @@ public class ReportUseCase implements IReportServicePort {
     @Override
     public Mono<Void> save(BootcampReport report) {
         return Mono.fromCallable(() -> validate(report)).flatMap(persistence::save);
+    }
+
+    @Override
+    public Mono<Void> updatePersonCount(Long bootcampId, Integer personCount) {
+        return Mono.fromCallable(() -> {
+                    requirePositive(bootcampId, ExceptionMessages.BOOTCAMP_ID_INVALID);
+                    return requireNotNegative(personCount, ExceptionMessages.COUNTS_INVALID);
+                })
+                .flatMap(count -> persistence.updatePersonCount(bootcampId, count))
+                .flatMap(updated -> Boolean.TRUE.equals(updated) ? Mono.<Void>empty()
+                        : Mono.error(new NotFoundException(ExceptionMessages.REPORT_NOT_FOUND.getMessage())));
     }
 
     private BootcampReport validate(BootcampReport report) {

@@ -16,6 +16,7 @@ public enum ExceptionMessages {
     CAPACITY_INVALID("Each capacity requires a positive ID, a name and its technologies."),
     TECHNOLOGY_INVALID("Each technology requires a positive ID and a name."),
     COUNTS_INVALID("Report counts must be zero or greater."),
+    REPORT_NOT_FOUND("The bootcamp report does not exist."),
     AUTHENTICATION_REQUIRED("A valid token is required to access this resource."),
     DATABASE_UNAVAILABLE("The persistence operation could not be completed."),
     INTERNAL_ERROR("The request could not be completed.");

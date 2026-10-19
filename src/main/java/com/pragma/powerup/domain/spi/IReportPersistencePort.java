@@ -5,4 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface IReportPersistencePort {
     Mono<Void> save(BootcampReport report);
+    Mono<Boolean> updatePersonCount(Long bootcampId, Integer personCount);
 }

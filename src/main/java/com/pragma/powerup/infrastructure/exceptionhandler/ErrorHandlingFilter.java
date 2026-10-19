@@ -2,6 +2,7 @@ package com.pragma.powerup.infrastructure.exceptionhandler;
 
 import com.mongodb.MongoException;
 import com.pragma.powerup.domain.exception.ExceptionMessages;
+import com.pragma.powerup.domain.exception.NotFoundException;
 import com.pragma.powerup.domain.exception.ValidationException;
 import com.pragma.powerup.infrastructure.input.rest.support.RequestValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class ErrorHandlingFilter implements HandlerFilterFunction<ServerResponse
 
     private Mono<ServerResponse> toResponse(Throwable error) {
         return switch (error) {
+            case NotFoundException exception -> respond(HttpStatus.NOT_FOUND, exception.getMessage());
             case ValidationException exception -> respond(HttpStatus.BAD_REQUEST, exception.getMessage());
             case MongoException ignored -> respond(HttpStatus.SERVICE_UNAVAILABLE, ExceptionMessages.DATABASE_UNAVAILABLE.getMessage());
             case RequestValidationException exception -> respond(HttpStatus.BAD_REQUEST, exception.getMessage());
