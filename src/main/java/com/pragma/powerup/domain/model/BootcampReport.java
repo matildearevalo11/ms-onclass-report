@@ -14,7 +14,7 @@ public class BootcampReport {
     private final LocalDate launchDate;
     private final Integer durationDays;
     private final List<CapacityDetail> capacities;
-    private final int capacityCount;
-    private final long technologyCount;
-    private final int personCount;
+    private final Integer capacityCount;
+    private final Long technologyCount;
+    private final Integer personCount;
 }

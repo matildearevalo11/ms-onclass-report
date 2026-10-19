@@ -54,8 +54,26 @@ class ReportApplicationTest {
         client.post().uri("/internal/bootcamp-reports")
                 .header("X-Internal-Token", "wrong")
                 .contentType(MediaType.APPLICATION_JSON).bodyValue(report)
-                .exchange().expectStatus().isUnauthorized();
+                .exchange().expectStatus().isUnauthorized()
+                .expectBody().jsonPath("$.errors.message")
+                .isEqualTo(com.pragma.powerup.domain.exception.ExceptionMessages.AUTHENTICATION_REQUIRED.getMessage());
         org.mockito.Mockito.verifyNoMoreInteractions(persistence);
+    }
+
+    @Test
+    void rejectsInvalidReportBody() {
+        client.post().uri("/internal/bootcamp-reports")
+                .header("X-Internal-Token", "local-dev-report-secret-change-me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(Map.of("bootcampId", -1, "name", ""))
+                .exchange().expectStatus().isBadRequest()
+                .expectBody().jsonPath("$.errors.message").isNotEmpty();
+        client.post().uri("/internal/bootcamp-reports")
+                .header("X-Internal-Token", "local-dev-report-secret-change-me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("{bad json")
+                .exchange().expectStatus().isBadRequest()
+                .expectBody().jsonPath("$.errors.message").isEqualTo(com.pragma.powerup.domain.exception.ExceptionMessages.INVALID_REQUEST.getMessage());
     }
 
     @Test
@@ -70,7 +88,9 @@ class ReportApplicationTest {
                         "launchDate", "2026-11-01", "durationDays", 90,
                         "capacities", List.of(), "capacityCount", 0, "technologyCount", 0,
                         "personCount", 0))
-                .exchange().expectStatus().isEqualTo(503);
+                .exchange().expectStatus().isEqualTo(503)
+                .expectBody().jsonPath("$.errors.message")
+                .isEqualTo(com.pragma.powerup.domain.exception.ExceptionMessages.DATABASE_UNAVAILABLE.getMessage());
     }
 
     @Test
